@@ -1,6 +1,6 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "noendermen:block/enderrack"
+    "all": "noendermen:block/fossilizedender"
   }
 }

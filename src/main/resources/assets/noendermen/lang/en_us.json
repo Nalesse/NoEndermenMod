@@ -1,4 +1,4 @@
 {
-  "block.noendermen.enderstone": "Enderstone",
-  "block.noendermen.enderrack": "Enderrack"
+  "block.noendermen.fossilizedender" : "Fossilized Ender",
+  "block.noendermen.netherfossilizedender" : "Nether Fossilized Ender"
 }
