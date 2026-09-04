@@ -5,39 +5,32 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.nyrader.noendermen.NoEndermen;
-import net.nyrader.noendermen.config.ClientConfig;
 import net.nyrader.noendermen.item.ModItems;
+
 import java.util.function.Supplier;
 
 public class ModBlocks
 {
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(
-            ForgeRegistries.BLOCKS,
-            NoEndermen.MOD_ID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(NoEndermen.MODID);
 
-    public static final RegistryObject<Block> FossilizedEnder = registerBlock("fossilizedender",
-            () -> new FossilizedEnderBlock(BlockBehaviour.Properties
-            .copy(Blocks.DEEPSLATE)));
+    public static final DeferredBlock<Block> FOSSILIZED_ENDER = registerBlock("fossilizedender", () ->
+            new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
+                    .requiresCorrectToolForDrops()));
 
-    public static final RegistryObject<Block> NetherFossilizedEnder = registerBlock("netherfossilizedender",
-            () -> new FossilizedEnderBlock(BlockBehaviour.Properties
-            .copy(Blocks.NETHERRACK)
-            .strength(3,3)));
 
-    public static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block)
+    public static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> blockSupplier)
     {
-        RegistryObject<T> toReturn = ModBlocks.BLOCKS.register(name, block);
-        registerBlockItem(name, toReturn);
-        return toReturn;
-    }
+        DeferredBlock<T> block = BLOCKS.register(name, blockSupplier);
 
-    private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block)
-    {
-        ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
-    }
+        ModItems.ITEMS.register(name,
+                () -> new BlockItem(
+                        block.get(),
+                        new Item.Properties()));
 
+        return block;
+    }
 }

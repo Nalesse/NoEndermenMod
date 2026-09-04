@@ -1,66 +1,53 @@
 package net.nyrader.noendermen;
 
-import com.example.examplemod.Config;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.nyrader.noendermen.block.ModBlocks;
-import net.nyrader.noendermen.config.ClientConfig;
-import net.nyrader.noendermen.config.ServerConfig;
 import net.nyrader.noendermen.item.ModItems;
+import org.slf4j.Logger;
 
-@Mod(NoEndermen.MOD_ID)
-public class NoEndermen
-{
-    public static final String MOD_ID = "noendermen";
+import com.mojang.logging.LogUtils;
 
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.ModContainer;
 
-    public NoEndermen(FMLJavaModLoadingContext context)
+// The value here should match an entry in the META-INF/neoforge.mods.toml file
+@Mod(NoEndermen.MODID)
+public class NoEndermen {
+    // Define mod id in a common place for everything to reference
+    public static final String MODID = "noendermen";
+    // Directly reference a slf4j logger
+    public static final Logger LOGGER = LogUtils.getLogger();
+
+    // The constructor for the mod class is the first code that is run when your mod is loaded.
+    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
+    public NoEndermen(IEventBus modEventBus, ModContainer modContainer)
     {
-        IEventBus modEventBus = context.getModEventBus();
-
-        ModItems.ITEMS.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus);
 
-        modEventBus.addListener(this::addCreative);
-
-        context.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
-        context.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+        modEventBus.addListener(NoEndermen::addCreative);
+        NeoForge.EVENT_BUS.addListener(NoEndermen::onEntityJoinLevel);
     }
 
-    private void addCreative(BuildCreativeModeTabContentsEvent event)
+    private static void addCreative(BuildCreativeModeTabContentsEvent event)
     {
         if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS)
         {
             ModItems.ITEMS.getEntries().forEach(item ->
-            {
-                event.accept(item.get());
-            });
+                    event.accept(item.get()));
         }
     }
 
-    @Mod.EventBusSubscriber(modid = NoEndermen.MOD_ID)
-    public static class EndermenSpawnEventHandler
+    private static void onEntityJoinLevel(EntityJoinLevelEvent event)
     {
-        @SubscribeEvent(priority = EventPriority.HIGHEST)
-        public static void OnEntityJoinLevel(EntityJoinLevelEvent event)
+        if (!event.getLevel().isClientSide() && event.getEntity() instanceof EnderMan)
         {
-            if (!ServerConfig.blockEndermanSpawns) { return; }
-
-            if (!event.getLevel().isClientSide && event.getEntity() instanceof EnderMan)
-            {
-                event.setCanceled(true);
-            }
+            event.setCanceled(true);
         }
     }
 }
