@@ -3,6 +3,8 @@ package net.nyrader.noendermen;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -30,8 +32,10 @@ public class NoEndermen {
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public NoEndermen(IEventBus modEventBus, ModContainer modContainer)
     {
-        modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
-        modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.CONFIG_SPEC);
+        modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.CONFIG_SPEC);
+
+        modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
@@ -51,7 +55,7 @@ public class NoEndermen {
 
     private static void onEntityJoinLevel(EntityJoinLevelEvent event)
     {
-        if (!ServerConfig.blockEndermanSpawns) { return; }
+        if (!ServerConfig.CONFIG.BLOCK_ENDERMEN_SPAWNS.get()) { return; }
 
         if (!event.getLevel().isClientSide() && event.getEntity() instanceof EnderMan)
         {

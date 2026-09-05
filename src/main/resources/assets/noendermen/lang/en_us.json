@@ -1,4 +1,17 @@
 {
   "block.noendermen.fossilizedender" : "Fossilized Ender",
-  "block.noendermen.netherfossilizedender" : "Nether Fossilized Ender"
+  "block.noendermen.netherfossilizedender" : "Nether Fossilized Ender",
+  "noendermen.config.enable_block_particles" : "Enable Block Particles",
+  "noendermen.config.particle_max_distance" : "Particle Max Distance",
+  "noendermen.config.particle_scale" : "Particle Scale",
+  "noendermen.config.particle_color" : "Particle Color",
+  "noendermen.config.block_endermen_spawns" : "Block Endermen Spawns",
+  "noendermen.config.enable_block_lighting" : "Enable Block Lighting",
+  "noendermen.config.block_light_level" : "Block Light Level",
+  "noendermen.config.enable_teleport" : "Enable Teleport",
+  "noendermen.config.random_teleport_chance" : "Random Teleport Chance",
+  "noendermen.config.random_teleport_radius" : "Random Teleport Radius",
+  "noendermen.config.random_teleport_height" : "Random Teleport Height",
+  "noendermen.config.max_teleport_attempts" : "Max Teleport Attempts",
+  "noendermen.config.play_teleport_sound" : "Play Teleport Sound"
 }

@@ -1,78 +1,79 @@
 package net.nyrader.noendermen.config;
 
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
-import net.nyrader.noendermen.NoEndermen;
+import org.apache.commons.lang3.tuple.Pair;
 
-@EventBusSubscriber(modid = NoEndermen.MODID)
 public class ServerConfig
 {
-    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+    public static final ServerConfig CONFIG;
+    public static final ModConfigSpec CONFIG_SPEC;
 
-    private static final ModConfigSpec.BooleanValue BLOCK_ENDERMEN_SPAWNS = BUILDER
-            .comment("When enabled prevents endermen from spawning")
-            .define("preventEndermenSpawns", true);
+    public final ModConfigSpec.ConfigValue<Boolean> BLOCK_ENDERMEN_SPAWNS;
+    public final ModConfigSpec.ConfigValue<Boolean> ENABLE_BLOCK_LIGHTING;
+    public final ModConfigSpec.ConfigValue<Integer> BLOCK_LIGHT_LEVEL;
+    public final ModConfigSpec.ConfigValue<Boolean> ENABLE_TELEPORT;
+    public final ModConfigSpec.DoubleValue TELEPORT_CHANCE;
+    public final ModConfigSpec.ConfigValue<Integer> TELEPORT_RADIUS;
+    public final ModConfigSpec.ConfigValue<Integer> TELEPORT_HEIGHT;
+    public final ModConfigSpec.ConfigValue<Integer> MAX_TELEPORT_ATTEMPTS;
+    public final ModConfigSpec.ConfigValue<Boolean> PLAY_TELEPORT_SOUND;
 
-    private static final ModConfigSpec.BooleanValue ENABLE_BLOCK_LIGHTING = BUILDER
-            .comment("When enabled fossilised ender gives off light. Only in the overworld")
-            .define("enableBlockLighting", true);
-
-    private static final ModConfigSpec.ConfigValue<Integer> BLOCK_LIGHT_LEVEL = BUILDER
-            .comment("Sets the brightness of fossilised ender")
-            .define("blockLightLevel", 9);
-
-    private static final ModConfigSpec.BooleanValue ENABLE_TELEPORT = BUILDER
-            .comment("When enabled fossilised ender has a random chance to teleport when mined.")
-            .define("enableTeleport", true);
-
-    private static final ModConfigSpec.DoubleValue TELEPORT_CHANCE = BUILDER
-            .comment("The chance that a fossilized ender block will teleport when mined")
-            .defineInRange("randomTeleportChance", 0.3, 0, 1);
-
-    private static final ModConfigSpec.ConfigValue<Integer> TELEPORT_RADIUS = BUILDER
-            .comment("The maximum number of blocks fossilized ender can teleport on the X and Z axis")
-            .define("randomTeleportRadius", 8);
-
-    private static final ModConfigSpec.ConfigValue<Integer> TELEPORT_HEIGHT = BUILDER
-            .comment("The maximum number of blocks that fossilized ender can teleport on the y axis")
-            .define("randomTeleportHeight", 2);
-
-    private static final ModConfigSpec.ConfigValue<Integer> MAX_TELEPORT_ATTEMPTS = BUILDER
-            .comment("The maximum number of times to try finding a valid teleport position")
-            .define("maxTeleportAttempts", 16);
-
-    private static final ModConfigSpec.BooleanValue PLAY_TELEPORT_SOUND = BUILDER
-            .comment("When enabled plays the enderman teleport SFX when the block teleports")
-            .define("playTeleportSound", true);
-
-    public static final ModConfigSpec SPEC = BUILDER.build();
-
-    public static boolean blockEndermanSpawns;
-    public static boolean enableBlockLighting;
-    public static Integer blockLightLevel;
-    public static boolean enableTeleport;
-    public static Double teleportChance;
-    public static Integer teleportRadius;
-    public static Integer teleportHeight;
-    public static Integer maxTeleportAttempts;
-    public static boolean playTeleportSound;
-
-    @SubscribeEvent
-    static void onLoad(final ModConfigEvent event)
+    private ServerConfig(ModConfigSpec.Builder builder)
     {
-        if (event.getConfig().getSpec() != SPEC)
-            return;
+        BLOCK_ENDERMEN_SPAWNS = builder
+                .comment("When enabled prevents endermen from spawning")
+                .translation("noendermen.config.block_endermen_spawns")
+                .define("block_endermen_spawns", true);
 
-        blockEndermanSpawns = BLOCK_ENDERMEN_SPAWNS.get();
-        enableBlockLighting = ENABLE_BLOCK_LIGHTING.get();
-        blockLightLevel = BLOCK_LIGHT_LEVEL.get();
-        enableTeleport = ENABLE_TELEPORT.get();
-        teleportChance = TELEPORT_CHANCE.get();
-        teleportRadius = TELEPORT_RADIUS.get();
-        teleportHeight = TELEPORT_HEIGHT.get();
-        maxTeleportAttempts = MAX_TELEPORT_ATTEMPTS.get();
-        playTeleportSound = PLAY_TELEPORT_SOUND.get();
+        ENABLE_BLOCK_LIGHTING = builder
+                .comment("When enabled fossilised ender gives off light")
+                .translation("noendermen.config.enable_block_lighting")
+                .define("enable_block_lighting", true);
+
+        BLOCK_LIGHT_LEVEL = builder
+                .comment("Sets the brightness of fossilised ender")
+                .translation("noendermen.config.block_light_level")
+                .defineInRange("block_light_level", 9, 0, 15);
+
+        ENABLE_TELEPORT = builder
+                .comment("When enabled fossilised ender has a random chance to teleport when mined")
+                .translation("noendermen.config.enable_teleport")
+                .define("enable_teleport", true);
+
+        TELEPORT_CHANCE = builder
+                .comment("The chance that a fossilized ender block will teleport when mined")
+                .translation("noendermen.config.random_teleport_chance")
+                .defineInRange("random_teleport_chance", 0.3, 0, 1);
+
+        TELEPORT_RADIUS = builder
+                .comment("The maximum number of blocks fossilized ender can teleport on the X and Z axis")
+                .translation("noendermen.config.random_teleport_radius")
+                .define("random_teleport_radius", 8);
+
+        TELEPORT_HEIGHT = builder
+                .comment("The maximum number of blocks that fossilized ender can teleport on the Y axis")
+                .translation("noendermen.config.random_teleport_height")
+                .define("random_teleport_height", 2);
+
+        MAX_TELEPORT_ATTEMPTS = builder
+                .comment("The maximum number of times to try finding a valid teleport position")
+                .translation("noendermen.config.max_teleport_attempts")
+                .define("max_teleport_attempts", 16);
+
+        PLAY_TELEPORT_SOUND = builder
+                .comment("When enabled plays the enderman teleport SFX when the block teleports")
+                .translation("noendermen.config.play_teleport_sound")
+                .define("play_teleport_sound", true);
+
+    }
+
+    static
+    {
+        Pair<ServerConfig, ModConfigSpec> pair =
+                new ModConfigSpec.Builder().configure(ServerConfig::new);
+        CONFIG = pair.getLeft();
+        CONFIG_SPEC = pair.getRight();
     }
 }

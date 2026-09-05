@@ -43,12 +43,12 @@ public class FossilizedEnderBlock extends Block
     @Override
     public void animateTick(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull RandomSource random)
     {
-        if (!ClientConfig.enableBlockParticles) { return; }
+        if (!ClientConfig.CONFIG.ENABLE_BLOCK_PARTICLES.get()) { return; }
 
         Player player = Minecraft.getInstance().player;
         if (player == null) { return; }
 
-        double maxDistance = ClientConfig.particleMaxDistance;
+        double maxDistance = ClientConfig.CONFIG.PARTICLE_MAX_DISTANCE.get();
 
         if (player.distanceToSqr(
                 pos.getX() + 0.5,
@@ -83,19 +83,19 @@ public class FossilizedEnderBlock extends Block
 
     private static @NotNull DustParticleOptions getParticleSettings() {
         Vector3f color;
-        if (ClientConfig.particleColorList.size() == 3)
+        if (ClientConfig.CONFIG.PARTICLE_COLOR.get().size() == 3)
         {
             color = new Vector3f(
-                    ClientConfig.particleColorList.get(0).floatValue(),
-                    ClientConfig.particleColorList.get(1).floatValue(),
-                    ClientConfig.particleColorList.get(2).floatValue());
+                    ClientConfig.CONFIG.PARTICLE_COLOR.get().get(0).floatValue(),
+                    ClientConfig.CONFIG.PARTICLE_COLOR.get().get(1).floatValue(),
+                    ClientConfig.CONFIG.PARTICLE_COLOR.get().get(2).floatValue());
         }
         else
         {
             color = new Vector3f(0.4f, 1.0f, 0.75f);
         }
 
-        float scale = ClientConfig.particleScale;
+        float scale = ClientConfig.CONFIG.PARTICLE_SCALE.get().floatValue();
         return new DustParticleOptions(color, scale);
     }
 
@@ -113,7 +113,7 @@ public class FossilizedEnderBlock extends Block
                             .getOrThrow(Enchantments.SILK_TOUCH)
             ) > 0;
 
-            if (!hasSilkTouch && level.random.nextFloat() < ServerConfig.teleportChance)
+            if (!hasSilkTouch && level.random.nextFloat() < ServerConfig.CONFIG.TELEPORT_CHANCE.get())
             {
                 tryTeleport(level, pos, state);
                 return state;
@@ -126,14 +126,14 @@ public class FossilizedEnderBlock extends Block
 
     private void tryTeleport(Level level, BlockPos pos, BlockState state)
     {
-        if (!ServerConfig.enableTeleport)  { return; }
+        if (!ServerConfig.CONFIG.ENABLE_TELEPORT.get())  { return; }
 
         RandomSource random = level.random;
 
-        int radius = ServerConfig.teleportRadius;
-        int height = ServerConfig.teleportHeight;
+        int radius = ServerConfig.CONFIG.TELEPORT_RADIUS.get();
+        int height = ServerConfig.CONFIG.TELEPORT_HEIGHT.get();
 
-        for (int i = 0; i < ServerConfig.maxTeleportAttempts; i++)
+        for (int i = 0; i < ServerConfig.CONFIG.MAX_TELEPORT_ATTEMPTS.get(); i++)
         {
             int dy = random.nextIntBetweenInclusive(-height, height);
             int dx = random.nextIntBetweenInclusive(-radius, radius);
@@ -152,7 +152,7 @@ public class FossilizedEnderBlock extends Block
                 level.setBlock(target, state, 3);
                 level.removeBlock(pos, false);
 
-                if (ServerConfig.playTeleportSound) {
+                if (ServerConfig.CONFIG.PLAY_TELEPORT_SOUND.get()) {
                     level.playSound(
                             null,
                             pos,
@@ -170,7 +170,7 @@ public class FossilizedEnderBlock extends Block
     @Override
     public int getLightEmission(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos)
     {
-        if (!ServerConfig.enableBlockLighting) { return 0; }
-        return ServerConfig.blockLightLevel;
+        if (!ServerConfig.CONFIG.ENABLE_BLOCK_LIGHTING.get()) { return 0; }
+        return ServerConfig.CONFIG.BLOCK_LIGHT_LEVEL.get();
     }
 }
