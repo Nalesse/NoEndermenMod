@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "noendermen:fossilizedender"
+    "noendermen:fossilizedender",
+    "noendermen:netherfossilizedender"
   ]
 }

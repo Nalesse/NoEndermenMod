@@ -7,7 +7,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.nyrader.noendermen.NoEndermen;
 import net.nyrader.noendermen.item.ModItems;
 
@@ -18,7 +17,12 @@ public class ModBlocks
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(NoEndermen.MODID);
 
     public static final DeferredBlock<Block> FOSSILIZED_ENDER = registerBlock("fossilizedender", () ->
-            new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
+            new FossilizedEnderBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
+                    .requiresCorrectToolForDrops()));
+
+    public static final DeferredBlock<Block> NETHER_FOSSILIZED_ENDER = registerBlock("netherfossilizedender", () ->
+            new FossilizedEnderBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERRACK)
+                    .strength(3, 3)
                     .requiresCorrectToolForDrops()));
 
 
